@@ -46,33 +46,27 @@ describe('GET: /api/articles/:article_id', () => {
             .expect(200)
             .then(({ body }) => {
                 expect(body).toHaveLength(1)
-                body.forEach((article) => {
-                    expect(article).toHaveProperty("title", expect.any(String));
-                    expect(article).toHaveProperty("topic", expect.any(String));
-                    expect(article).toHaveProperty("author", expect.any(String));
-                    expect(article).toHaveProperty("body", expect.any(String));
-                    expect(article).toHaveProperty("created_at", expect.any(String));
-                    expect(article).toHaveProperty("votes", expect.any(Number));
-                    expect(article).toHaveProperty("article_img_url", expect.any(String));
-                })
+                console.log(body[0].title);
+                expect(body[0].title).toBe('Seven inspirational thought leaders from Manchester UK')
+                expect(body[0].author).toBe('rogersop');
             })
     });
-    it('404 - GET invalid ID', () => {
-        return request(app)
-            .get('/api/articles/1234567')
-            .expect(404)
-            .then(({ body }) => {
-                console.log(body.msg);
-                expect(body.msg).toBe("No article found for article 1234567")
-            })
-    });
-    it('400 - GET invalid format for get request', () => {
-        return request(app)
-            .get('/api/articles/notAnArticle')
-            .expect(400)
-            .then(({ body }) => {
-                console.log(body.msg);
-                expect(body.msg).toBe("Wrong data type, please use number")
-            })
-    });
-})
+});
+it('404 - GET invalid ID', () => {
+    return request(app)
+        .get('/api/articles/1234567')
+        .expect(404)
+        .then(({ body }) => {
+            console.log(body.msg);
+            expect(body.msg).toBe("No article found for article 1234567")
+        })
+});
+it('400 - GET invalid format for get request', () => {
+    return request(app)
+        .get('/api/articles/notAnArticle')
+        .expect(400)
+        .then(({ body }) => {
+            console.log(body.msg);
+            expect(body.msg).toBe("Wrong data type, please use number")
+        })
+});
