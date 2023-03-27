@@ -46,7 +46,6 @@ describe('GET: /api/articles/:article_id', () => {
             .expect(200)
             .then(({ body }) => {
                 expect(body).toHaveLength(1)
-                console.log(body[0].title);
                 expect(body[0].title).toBe('Seven inspirational thought leaders from Manchester UK')
                 expect(body[0].author).toBe('rogersop');
             })
