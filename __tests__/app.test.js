@@ -57,7 +57,7 @@ it('404 - GET invalid ID', () => {
         .get('/api/articles/1234567')
         .expect(404)
         .then(({ body }) => {
-            console.log(body.msg);
+
             expect(body.msg).toBe("No article found for article 1234567")
         })
 });
@@ -66,7 +66,6 @@ it('400 - GET invalid format for get request', () => {
         .get('/api/articles/notAnArticle')
         .expect(400)
         .then(({ body }) => {
-            console.log(body.msg);
             expect(body.msg).toBe("Wrong data type, please use number")
         })
 });
