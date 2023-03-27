@@ -11,8 +11,7 @@ exports.getSpecificArticle = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    console.log(req.params);
     fetchArticles().then((result) => {
-        console.log(result);
+        res.status(200).send(result);
     })
 }

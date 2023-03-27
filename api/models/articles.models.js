@@ -1,4 +1,5 @@
 const db = require('../../db/connection')
+const { commentCount } = require('../utility-functions/utilities')
 
 exports.fetchSpecificArticle = (id) => {
     const articleId = id;
@@ -24,7 +25,8 @@ exports.fetchSpecificArticle = (id) => {
 }
 
 exports.fetchArticles = () => {
+
     return db.query(`SELECT * FROM articles ORDER BY created_at DESC`).then((result) => {
-        console.log(result.rows);
+        return result.rows
     })
 }

@@ -3,6 +3,7 @@ const seed = require('../db/seeds/seed')
 const testData = require('../db/data/test-data/index')
 const request = require("supertest")
 const app = require('../api/app')
+const { commentCount } = require('../api/utility-functions/utilities')
 
 beforeEach(() => {
     return seed(testData);
@@ -40,13 +41,12 @@ describe('GET: /api/topics', () => {
 })
 
 describe('GET: /api/articles/:article_id', () => {
-    it.only('should return all the topics table information when using a get request', () => {
+    it('should return all the topics table information when using a get request', () => {
         return request(app)
-            .get('/api/articles/10')
+            .get('/api/articles/1')
             .expect(200)
             .then(({ body }) => {
                 expect(body).toHaveLength(1)
-                console.log(body[0].title);
                 expect(body[0].title).toBe('Seven inspirational thought leaders from Manchester UK')
                 expect(body[0].author).toBe('rogersop');
             })
@@ -70,7 +70,7 @@ describe('GET: /api/articles/:article_id', () => {
 
 
     describe('GET /api/articles', () => {
-        it('should return all the articles table information when using a get request', () => {
+        it.only('should return all the articles table information when using a get request', () => {
             return request(app)
                 .get('/api/articles')
                 .expect(200)
@@ -86,6 +86,9 @@ describe('GET: /api/articles/:article_id', () => {
                         expect(article).toHaveProperty("article_img_url", expect.any(String));
                     })
                 })
+        });
+        it.only('should ', () => {
+            return commentCount(1).then((data) => { console.log(data); })
         });
     });
 })
