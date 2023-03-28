@@ -20,6 +20,7 @@ exports.fetchSpecificArticle = (id) => {
                 msg: "Wrong data type, please use number"
             })
         }
+        console.log('hello');
         return Promise.reject(err)
     })
 }
