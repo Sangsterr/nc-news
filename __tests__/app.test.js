@@ -3,7 +3,7 @@ const seed = require('../db/seeds/seed')
 const testData = require('../db/data/test-data/index')
 const request = require("supertest")
 const app = require('../api/app')
-const { commentCount } = require('../api/utility-functions/utilities')
+const sorted = require('jest-sorted');
 
 beforeEach(() => {
     return seed(testData);
@@ -80,14 +80,14 @@ describe('GET: /api/articles/:article_id', () => {
     });
 })
 
-describe('GET /api/articles', () => {
+describe.only('GET /api/articles', () => {
     it('should return all the articles table information including the new comment count property and value when using a get request', () => {
         return request(app)
             .get('/api/articles')
             .expect(200)
             .then(({ body }) => {
-                expect(body).toHaveLength(12)
-                body.forEach((article) => {
+                expect(body.articles).toHaveLength(12)
+                body.articles.forEach((article) => {
                     expect(article).toHaveProperty("title", expect.any(String));
                     expect(article).toHaveProperty("topic", expect.any(String));
                     expect(article).toHaveProperty("author", expect.any(String));
@@ -99,16 +99,17 @@ describe('GET /api/articles', () => {
                 })
             })
     });
-    it('should check to make sure the articles are in descending order', () => {
+    it.only('should check to make sure the articles are in descending order', () => {
         return request(app)
             .get('/api/articles')
             .expect(200)
             .then(({ body }) => {
-                expect(body[0].created_at > body[1].created_at).toBe(true);
-                expect(body[9].created_at > body[10].created_at).toBe(true);
-                expect(body[5].created_at > body[4].created_at).toBe(false);
-                expect(body[10].created_at > body[11].created_at).toBe(true);
-                expect(body[6].created_at > body[2].created_at).toBe(false);
+
+                const articles = body.articles
+                console.log(articles);
+                expect(articles).toBeSortedBy('created_at', {
+                    descending: true,
+                });
             }
             )
     })

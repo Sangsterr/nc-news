@@ -12,6 +12,7 @@ exports.getSpecificArticle = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
     fetchArticles().then((result) => {
-        res.status(200).send(result);
+
+        res.status(200).send({ articles: result });
     })
 }

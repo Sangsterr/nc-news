@@ -20,24 +20,23 @@ exports.fetchSpecificArticle = (id) => {
                 msg: "Wrong data type, please use number"
             })
         }
-        console.log('hello');
         return Promise.reject(err)
     })
 }
 
 exports.fetchArticles = () => {
-
-    return db.query(`SELECT * FROM articles ORDER BY created_at DESC`).then((result) => {
-        const eachArticle = result.rows;
-        const commentAmount = eachArticle.map((article) => {
-            return commentCount(article.article_id).then((currentCount) => {
-                article.comment_count = currentCount
-                return article
-            })
-        })
-        return Promise.all(commentAmount)
-            .then((result) => {
-                return result
-            })
-    })
+    return db
+        .query(
+            `
+      SELECT articles.*, COUNT(articles.article_id) AS comment_count FROM
+      articles
+      LEFT JOIN comments on articles.article_id = comments.article_id
+      GROUP BY articles.article_id
+      ORDER BY articles.created_at DESC;
+    `
+        )
+        .then((res) => { return res.rows });
 }
+
+
+
