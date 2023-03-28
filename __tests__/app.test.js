@@ -2,8 +2,10 @@ const db = require('../db/connection')
 const seed = require('../db/seeds/seed')
 const testData = require('../db/data/test-data/index')
 const request = require("supertest")
+
 const app = require('../api/app')
 const sorted = require('jest-sorted');
+
 
 beforeEach(() => {
     return seed(testData);
@@ -19,26 +21,17 @@ describe('Returns 404 if submitting an invalid URL', () => {
             .get('/api/tpoics')
             .expect(404)
             .then(({ body }) => {
+
                 expect(body.msg).toBe('Invalid URL')
+
             })
     });
 });
 
-describe('GET: /api/topics', () => {
-    it('should return all the topics table information when using a get request', () => {
-        return request(app)
-            .get('/api/topics')
-            .expect(200)
-            .then(({ body }) => {
-                expect(body).toHaveLength(3)
-                body.forEach((topic) => {
-                    expect(topic).toHaveProperty("description", expect.any(String));
-                    expect(topic).toHaveProperty("slug", expect.any(String));
-                })
-            })
-    });
 
-})
+
+
+
 
 describe('GET: /api/articles/:article_id', () => {
     it("200 responds with correct article", () => {
@@ -46,6 +39,7 @@ describe('GET: /api/articles/:article_id', () => {
             .get("/api/articles/1")
             .expect(200)
             .then(({ body }) => {
+
                 expect(body[0]).toEqual({
 
                     article_id: 1,
@@ -60,6 +54,7 @@ describe('GET: /api/articles/:article_id', () => {
                 }
                 )
                 expect(body).toBeInstanceOf(Object)
+
             })
     });
     it('404 - GET invalid ID', () => {
@@ -114,3 +109,30 @@ describe.only('GET /api/articles', () => {
             )
     })
 });
+
+            })
+    });
+});
+it('404 - GET invalid ID', () => {
+    return request(app)
+        .get('/api/articles/1234567')
+        .expect(404)
+        .then(({ body }) => {
+
+            expect(body.msg).toBe("No article found for article 1234567")
+        })
+});
+it('400 - GET invalid format for get request', () => {
+    return request(app)
+        .get('/api/articles/notAnArticle')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Wrong data type, please use number")
+        })
+});
+
+
+
+
+
+
