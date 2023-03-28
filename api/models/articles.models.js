@@ -27,6 +27,16 @@ exports.fetchSpecificArticle = (id) => {
 exports.fetchArticles = () => {
 
     return db.query(`SELECT * FROM articles ORDER BY created_at DESC`).then((result) => {
-        return result.rows
+        const eachArticle = result.rows;
+        const commentAmount = eachArticle.map((article) => {
+            return commentCount(article.article_id).then((currentCount) => {
+                article.comment_count = currentCount
+                return article
+            })
+        })
+        return Promise.all(commentAmount)
+            .then((result) => {
+                return result
+            })
     })
 }
