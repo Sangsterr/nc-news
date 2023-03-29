@@ -27,7 +27,7 @@ exports.getArticleComments = (req, res, next) => {
             if (result.length > 0) {
                 res.status(200).send({ comments: result })
             } else
-                res.status(200).send({ msg: 'Article has no comments' })
+                res.status(200).send({ msg: result })
         })
         .catch((err) => {
             next(err)

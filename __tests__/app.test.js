@@ -129,30 +129,43 @@ describe('GET /api/articles/:article_id/comments', () => {
             .then(({ body }) => {
                 expect(body.msg).toBe("Wrong data type, please use number")
             })
-    });
+    })
+    it('200 - GET article ID for an article that exists and has comments', () => {
+        return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.comments[0]).toHaveProperty("author", expect.any(String));
+                expect(body.comments[0]).toHaveProperty("body", expect.any(String));
+                expect(body.comments[0]).toHaveProperty("created_at", expect.any(String));
+                expect(body.comments[0]).toHaveProperty("votes", expect.any(Number));
+                expect(body.comments[0]).toHaveProperty("article_id", expect.any(Number));
+                expect(body.comments[0]).toHaveProperty("comment_id", expect.any(Number))
+            })
+    })
+    it('200 - GET article ID for an article that exists but doesnt have any comments ', () => {
+        return request(app)
+            .get('/api/articles/7/comments')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.msg).toEqual([])
+            })
+    })
+    it('should check to make sure the comments are in descending order', () => {
+        return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then(({ body }) => {
+                const comments = body.comments
+                expect(comments).toBeSortedBy('created_at', {
+                    descending: true,
+                });
+            }
+            )
+    })
 })
-it('200 - GET article ID for an article that exists and has comments', () => {
-    return request(app)
-        .get('/api/articles/1/comments')
-        .expect(200)
-        .then(({ body }) => {
-            expect(body.comments[0]).toHaveProperty("author", expect.any(String));
-            expect(body.comments[0]).toHaveProperty("body", expect.any(String));
-            expect(body.comments[0]).toHaveProperty("created_at", expect.any(String));
-            expect(body.comments[0]).toHaveProperty("votes", expect.any(Number));
-            expect(body.comments[0]).toHaveProperty("article_id", expect.any(Number));
-            expect(body.comments[0]).toHaveProperty("comment_id", expect.any(Number))
-        })
-})
-it('200 - GET article ID for an article that exists but doesnt have any comments ', () => {
-    return request(app)
-        .get('/api/articles/7/comments')
-        .expect(200)
-        .then(({ body }) => {
-            expect(body.msg).toBe('Article has no comments')
-        })
-});
-;
+
+
 
 
 
