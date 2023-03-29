@@ -1,6 +1,6 @@
-const express = require('express');
-const { getTopics } = require('./controllers/topics.controller')
-const { getSpecificArticle, getArticles } = require('./controllers/articles.controller')
+const express = require("express");
+const { getTopics } = require("./controllers/topics.controller")
+const { getSpecificArticle, getArticles, getArticleComments } = require("./controllers/articles.controller")
 
 const app = express();
 
@@ -12,8 +12,22 @@ app.get("/api/articles", getArticles)
 
 app.get("/api/articles/:article_id", getSpecificArticle)
 
-app.use('*', (req, res, next) => {
-    res.status(404).send({ msg: 'Invalid URL' });
+app.get("/api/articles/:article_id/comments", getArticleComments)
+
+app.use("*", (req, res, next) => {
+    res.status(404).send({ msg: "Invalid URL" });
+})
+
+app.use((err, req, res, next) => {
+    if (err.status && err.msg) {
+        res.status(err.status).send({ msg: err.msg });
+    } else next(err)
+})
+
+app.use((err, req, res, next) => {
+    if (err.code === "22P02") {
+        res.status(400).send({ msg: "Wrong data type, please use number" });
+    }
 })
 
 app.use((err, req, res, next) => {
@@ -24,5 +38,8 @@ app.use((err, req, res, next) => {
     }
 })
 
+app.use((err, req, res, next) => {
+    res.status(500).send({ msg: "Server Error" });
+});
 
 module.exports = app;
