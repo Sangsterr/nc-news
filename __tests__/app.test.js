@@ -29,10 +29,6 @@ describe('Returns 404 if submitting an invalid URL', () => {
 });
 
 
-
-
-
-
 describe('GET: /api/articles/:article_id', () => {
     it("200 responds with correct article", () => {
         return request(app)
@@ -54,7 +50,6 @@ describe('GET: /api/articles/:article_id', () => {
                 }
                 )
                 expect(body).toBeInstanceOf(Object)
-
             })
     });
     it('404 - GET invalid ID', () => {
@@ -75,12 +70,13 @@ describe('GET: /api/articles/:article_id', () => {
     });
 })
 
-describe.only('GET /api/articles', () => {
+describe('GET /api/articles', () => {
     it('should return all the articles table information including the new comment count property and value when using a get request', () => {
         return request(app)
             .get('/api/articles')
             .expect(200)
             .then(({ body }) => {
+
                 expect(body.articles).toHaveLength(12)
                 body.articles.forEach((article) => {
                     expect(article).toHaveProperty("title", expect.any(String));
@@ -90,18 +86,16 @@ describe.only('GET /api/articles', () => {
                     expect(article).toHaveProperty("created_at", expect.any(String));
                     expect(article).toHaveProperty("votes", expect.any(Number));
                     expect(article).toHaveProperty("article_img_url", expect.any(String));
-                    expect(article).toHaveProperty("comment_count", expect.any(String))
+                    expect(article).toHaveProperty("comment_count", expect.any(Number))
                 })
             })
     });
-    it.only('should check to make sure the articles are in descending order', () => {
+    it('should check to make sure the articles are in descending order', () => {
         return request(app)
             .get('/api/articles')
             .expect(200)
             .then(({ body }) => {
-
                 const articles = body.articles
-                console.log(articles);
                 expect(articles).toBeSortedBy('created_at', {
                     descending: true,
                 });
@@ -110,26 +104,57 @@ describe.only('GET /api/articles', () => {
     })
 });
 
+describe('GET /api/articles/:article_id/comments', () => {
+    it('should return an array with 6 properties, containing the correct comments for the requested article', () => {
+        return request(app)
+            .get('/api/articles/5/comments')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.comments[0].body).toBe("I am 100% sure that we're not completely sure.")
+                expect(body.comments[1].body).toBe("What do you see? I have no idea where this will lead us. This place I speak of, is known as the Black Lodge.")
             })
     });
-});
-it('404 - GET invalid ID', () => {
+    it('404 - GET invalid ID', () => {
+        return request(app)
+            .get('/api/articles/1234567/comments')
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("No article found for article 1234567")
+            })
+    })
+    it('400 - GET invalid format for get request', () => {
+        return request(app)
+            .get('/api/articles/notAnArticle/comments')
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Wrong data type, please use number")
+            })
+    });
+})
+it('200 - GET article ID for an article that exists and has comments', () => {
     return request(app)
-        .get('/api/articles/1234567')
-        .expect(404)
+        .get('/api/articles/1/comments')
+        .expect(200)
         .then(({ body }) => {
+            expect(body.comments[0]).toHaveProperty("author", expect.any(String));
+            expect(body.comments[0]).toHaveProperty("body", expect.any(String));
+            expect(body.comments[0]).toHaveProperty("created_at", expect.any(String));
+            expect(body.comments[0]).toHaveProperty("votes", expect.any(Number));
+            expect(body.comments[0]).toHaveProperty("article_id", expect.any(Number));
+            expect(body.comments[0]).toHaveProperty("comment_id", expect.any(Number))
+        })
+})
+it('200 - GET article ID for an article that exists but doesnt have any comments ', () => {
+    return request(app)
+        .get('/api/articles/7/comments')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.msg).toBe('Article has no comments')
+        })
+});
+;
 
-            expect(body.msg).toBe("No article found for article 1234567")
-        })
-});
-it('400 - GET invalid format for get request', () => {
-    return request(app)
-        .get('/api/articles/notAnArticle')
-        .expect(400)
-        .then(({ body }) => {
-            expect(body.msg).toBe("Wrong data type, please use number")
-        })
-});
+
 
 
 

@@ -1,4 +1,4 @@
-const { fetchArticles, fetchSpecificArticle } = require('../models/articles.models')
+const { fetchArticles, fetchSpecificArticle, fetchArticleComments } = require('../models/articles.models')
 
 exports.getSpecificArticle = (req, res, next) => {
     const id = req.params.article_id;
@@ -15,4 +15,21 @@ exports.getArticles = (req, res, next) => {
 
         res.status(200).send({ articles: result });
     })
+}
+
+exports.getArticleComments = (req, res, next) => {
+    const articleId = req.params.article_id;
+    fetchSpecificArticle(articleId).then((result) => {
+        if (result) return fetchArticleComments(articleId)
+        else Promise.reject({ status: 404, msg: "Article doesnt exist" })
+    })
+        .then((result) => {
+            if (result.length > 0) {
+                res.status(200).send({ comments: result })
+            } else
+                res.status(200).send({ msg: 'Article has no comments' })
+        })
+        .catch((err) => {
+            next(err)
+        })
 }
