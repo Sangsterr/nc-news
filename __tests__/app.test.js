@@ -304,7 +304,7 @@ describe('PATCH - /api/articles/:article_id', () => {
                 })
             })
     });
-    it.only('404 - Returns error when trying to vote on an article that doesnt exist', () => {
+    it('404 - Returns error when trying to vote on an article that doesnt exist', () => {
         const input = {
             inv_votes: 1
         }
