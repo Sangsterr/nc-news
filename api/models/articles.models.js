@@ -54,3 +54,17 @@ exports.addArticleComment = (comment, articleNumber) => {
         return result.rows[0]
     })
 }
+
+exports.articlePatcher = (article, voteIncrease) => {
+    const votes = article[0].votes += voteIncrease;
+    const articleId = article[0].article_id;
+    const information = [articleId, votes]
+    console.log(articleId, votes);
+    return db.query(`
+    UPDATE articles
+SET votes = $2
+WHERE article_id = $1
+RETURNING *;`, information).then((result) => {
+        return result.rows[0]
+    })
+}
