@@ -58,6 +58,7 @@ exports.postArticleComment = (req, res, next) => {
 exports.patchArticle = (req, res, next) => {
     const article = req.params.article_id
     const voteIncrease = req.body.inc_votes
+
     fetchSpecificArticle(article).then((result) => {
         if (result) {
             return articlePatcher(result, voteIncrease)

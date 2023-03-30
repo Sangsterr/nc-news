@@ -261,7 +261,7 @@ describe('POST /api/articles/:article_id/comments', () => {
 
 })
 
-describe.only('PATCH - /api/articles/:article_id', () => {
+describe('PATCH - /api/articles/:article_id', () => {
     it('200 - Should add an extra vote when passed 1 or multiple votes', () => {
         const input = {
             inc_votes: 1
@@ -304,9 +304,9 @@ describe.only('PATCH - /api/articles/:article_id', () => {
                 })
             })
     });
-    it.only('404 - Returns error when trying to vote on an article that doesnt exist', () => {
+    it('404 - Returns error when trying to vote on an article that doesnt exist', () => {
         const input = {
-            inv_votes: 1
+            inc_votes: 1
         }
         return request(app)
             .patch("/api/articles/100000")
@@ -314,6 +314,30 @@ describe.only('PATCH - /api/articles/:article_id', () => {
             .expect(404)
             .then(({ body }) => {
                 expect(body.msg).toBe("No article found for article 100000")
+            })
+    })
+    it('400 - Returns error when trying to vote on an article that doesnt exist', () => {
+        const input = {
+            inc_votes: 1
+        }
+        return request(app)
+            .patch("/api/articles/NotAnId")
+            .send(input)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Wrong data type, please use number")
+            })
+    })
+    it('404 - Returns error when trying to vote on an article that doesnt exist', () => {
+        const input = {
+            inc_votes: 'five'
+        }
+        return request(app)
+            .patch("/api/articles/1")
+            .send(input)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Wrong data type, please use number")
             })
     })
 })

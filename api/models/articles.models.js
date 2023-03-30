@@ -59,7 +59,6 @@ exports.articlePatcher = (article, voteIncrease) => {
     const votes = article[0].votes += voteIncrease;
     const articleId = article[0].article_id;
     const information = [articleId, votes]
-    console.log(articleId, votes);
     return db.query(`
     UPDATE articles
 SET votes = $2
