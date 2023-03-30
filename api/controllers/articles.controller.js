@@ -1,4 +1,5 @@
-const { fetchArticles, fetchSpecificArticle, fetchArticleComments } = require('../models/articles.models')
+const { fetchArticles, fetchSpecificArticle, fetchArticleComments, addArticleComment } = require('../models/articles.models')
+const { checkUsername } = require('../models/users.models')
 
 exports.getSpecificArticle = (req, res, next) => {
     const id = req.params.article_id;
@@ -32,4 +33,25 @@ exports.getArticleComments = (req, res, next) => {
         .catch((err) => {
             next(err)
         })
+}
+
+exports.postArticleComment = (req, res, next) => {
+    const articleNumber = req.params.article_id
+    const comment = req.body
+    const commentBody = req.body.body
+    const username = req.body.username
+
+
+    if (!commentBody || !username) {
+        res.status(400).send({ msg: 'Please make sure you include a comment and a username' })
+    }
+    fetchSpecificArticle(articleNumber)
+        .then((result) => {
+            if (result) return addArticleComment(comment, articleNumber)
+        }).then((result) => {
+            res.status(201).send({ comment: result })
+        }).catch((err) => {
+            next(err);
+        })
+
 }

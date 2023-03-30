@@ -1,6 +1,6 @@
 const express = require("express");
 const { getTopics } = require("./controllers/topics.controller")
-const { getSpecificArticle, getArticles, getArticleComments } = require("./controllers/articles.controller")
+const { getSpecificArticle, getArticles, getArticleComments, postArticleComment } = require("./controllers/articles.controller")
 
 const app = express();
 
@@ -13,6 +13,8 @@ app.get("/api/articles", getArticles)
 app.get("/api/articles/:article_id", getSpecificArticle)
 
 app.get("/api/articles/:article_id/comments", getArticleComments)
+
+app.post("/api/articles/:article_id/comments", postArticleComment)
 
 app.use("*", (req, res, next) => {
     res.status(404).send({ msg: "Invalid URL" });
@@ -27,6 +29,8 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
     if (err.code === "22P02") {
         res.status(400).send({ msg: "Wrong data type, please use number" });
+    } else if (err.code === "23503") {
+        res.status(404).send({ msg: "Username not found" })
     }
 })
 

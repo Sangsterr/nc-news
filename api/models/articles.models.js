@@ -1,5 +1,4 @@
 const db = require('../../db/connection')
-const { commentCount } = require('../utility-functions/utilities')
 
 exports.fetchSpecificArticle = (id) => {
 
@@ -12,7 +11,6 @@ exports.fetchSpecificArticle = (id) => {
                 msg: `No article found for article ${id}`
             })
         }
-
         return result.rows;
     })
 }
@@ -31,8 +29,6 @@ exports.fetchArticles = () => {
         .then((res) => { return res.rows });
 }
 
-
-
 exports.fetchArticleComments = (article_id) => {
 
     const articleeId = article_id
@@ -45,3 +41,16 @@ exports.fetchArticleComments = (article_id) => {
             return data.rows;
         });
 };
+
+exports.addArticleComment = (comment, articleNumber) => {
+    const { body, username } = comment
+    const values = [body, username, articleNumber]
+    return db.query(`
+    INSERT INTO comments (body, author, article_id) 
+    VALUES ($1, $2, $3)
+    RETURNING *;
+    `, values).then((result) => {
+
+        return result.rows[0]
+    })
+}

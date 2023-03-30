@@ -28,7 +28,6 @@ describe('Returns 404 if submitting an invalid URL', () => {
     });
 });
 
-
 describe('GET: /api/articles/:article_id', () => {
     it("200 responds with correct article", () => {
         return request(app)
@@ -165,12 +164,101 @@ describe('GET /api/articles/:article_id/comments', () => {
     })
 })
 
+describe('POST /api/articles/:article_id/comments', () => {
+    it('201 - should add a comment to requested article', () => {
+        const inputComment = {
+            body: "Hey geezer",
+            username: "rogersop",
+        }
+        return request(app)
+            .post("/api/articles/7/comments")
+            .send(inputComment)
+            .expect(201)
+            .then(({ body }) => {
 
+                expect(body.comment.body).toBe("Hey geezer");
+                expect(body.comment.votes).toBe(0);
+                expect(body.comment.author).toBe("rogersop");
+                expect(body.comment.article_id).toBe(7);
+                expect(body.comment).toHaveProperty("created_at", expect.any(String));
+                expect(body.comment.comment_id).toBe(19)
+            }
+            )
+    })
+    it('201 - POST should add a comment to requested article which also ignores any extra inputted, unnecessary properties', () => {
+        const inputComment = {
+            body: "Hey geezer",
+            username: "rogersop",
+            test: 'test'
+        }
+        return request(app)
+            .post("/api/articles/7/comments")
+            .send(inputComment)
+            .expect(201)
+            .then(({ body }) => {
+                expect(body.comment.body).toBe("Hey geezer");
+                expect(body.comment.votes).toBe(0);
+                expect(body.comment.author).toBe("rogersop");
+                expect(body.comment.article_id).toBe(7);
+                expect(body.comment).toHaveProperty("created_at", expect.any(String));
+                expect(body.comment.comment_id).toBe(19)
+            }
+            )
+    })
+    it('404 - POST request for an article that doesnt exist', () => {
+        const inputComment = {
+            body: "Hey geezer",
+            username: "rogersop",
+        }
+        return request(app)
+            .post("/api/articles/100000/comments")
+            .send(inputComment)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe('No article found for article 100000')
+            })
+    })
+    it('404 - POST request for an article for a username that doesnt exist', () => {
+        const inputComment = {
+            body: "Hey geezer",
+            username: "tom",
+        }
+        return request(app)
+            .post("/api/articles/7/comments")
+            .send(inputComment)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Username not found')
+            })
+    })
+    it('400 - POST invalid format for get request', () => {
+        const inputComment = {
+            body: "Hey geezer",
+            username: "rogersop",
+        }
+        return request(app)
+            .post("/api/articles/NotAnArticle/comments")
+            .send(inputComment)
+            .expect(400)
+            .then(({ body }) => {
 
+                expect(body.msg).toBe('Wrong data type, please use number')
+            })
+    })
+    it('400 - POST missing required fields of username or body', () => {
+        const inputComment = {
+            username: "rogersop",
+        }
+        return request(app)
+            .post("/api/articles/7/comments")
+            .send(inputComment)
+            .expect(400)
+            .then(({ body }) => {
 
+                expect(body.msg).toBe('Please make sure you include a comment and a username')
+            })
+    })
 
-
-
-
+})
 
 
