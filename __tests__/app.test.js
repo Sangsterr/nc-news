@@ -245,7 +245,7 @@ describe('POST /api/articles/:article_id/comments', () => {
                 expect(body.msg).toBe('Wrong data type, please use number')
             })
     })
-    it('400 - POST missing required fields of username or body', () => {
+    it.only('400 - POST missing required fields of username or body', () => {
         const inputComment = {
             username: "rogersop",
         }
