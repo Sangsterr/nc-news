@@ -245,7 +245,7 @@ describe('POST /api/articles/:article_id/comments', () => {
                 expect(body.msg).toBe('Wrong data type, please use number')
             })
     })
-    it.only('400 - POST missing required fields of username or body', () => {
+    it('400 - POST missing required fields of username or body', () => {
         const inputComment = {
             username: "rogersop",
         }
@@ -261,4 +261,83 @@ describe('POST /api/articles/:article_id/comments', () => {
 
 })
 
-
+describe('PATCH - /api/articles/:article_id', () => {
+    it('200 - Should add an extra vote when passed 1 or multiple votes', () => {
+        const input = {
+            inc_votes: 1
+        }
+        return request(app)
+            .patch("/api/articles/1")
+            .send(input)
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.article).toEqual({
+                    article_id: 1,
+                    title: 'Living in the shadow of a great man',
+                    topic: 'mitch',
+                    author: 'butter_bridge',
+                    body: 'I find this existence challenging',
+                    created_at: '2020-07-09T20:11:00.000Z',
+                    votes: 101,
+                    article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+                })
+            })
+    });
+    it('200 - Should remove votes when passed a negative vote', () => {
+        const input = {
+            inc_votes: -5
+        }
+        return request(app)
+            .patch("/api/articles/1")
+            .send(input)
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.article).toEqual({
+                    article_id: 1,
+                    title: 'Living in the shadow of a great man',
+                    topic: 'mitch',
+                    author: 'butter_bridge',
+                    body: 'I find this existence challenging',
+                    created_at: '2020-07-09T20:11:00.000Z',
+                    votes: 95,
+                    article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+                })
+            })
+    });
+    it('404 - Returns error when trying to vote on an article that doesnt exist', () => {
+        const input = {
+            inc_votes: 1
+        }
+        return request(app)
+            .patch("/api/articles/100000")
+            .send(input)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("No article found for article 100000")
+            })
+    })
+    it('400 - Returns error when trying to vote on an article that doesnt exist', () => {
+        const input = {
+            inc_votes: 1
+        }
+        return request(app)
+            .patch("/api/articles/NotAnId")
+            .send(input)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Wrong data type, please use number")
+            })
+    })
+    it('404 - Returns error when trying to vote on an article that doesnt exist', () => {
+        const input = {
+            inc_votes: 'five'
+        }
+        return request(app)
+            .patch("/api/articles/1")
+            .send(input)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Wrong data type, please use number")
+            })
+    })
+})
