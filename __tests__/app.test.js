@@ -175,16 +175,17 @@ describe('POST /api/articles/:article_id/comments', () => {
             .send(inputComment)
             .expect(201)
             .then(({ body }) => {
-                expect(body.objectComment.body).toBe("Hey geezer");
-                expect(body.objectComment.votes).toBe(0);
-                expect(body.objectComment.author).toBe("rogersop");
-                expect(body.objectComment.article_id).toBe(7);
-                expect(body.objectComment).toHaveProperty("created_at", expect.any(String));
-                expect(body.objectComment.comment_id).toBe(19)
+
+                expect(body.comment.body).toBe("Hey geezer");
+                expect(body.comment.votes).toBe(0);
+                expect(body.comment.author).toBe("rogersop");
+                expect(body.comment.article_id).toBe(7);
+                expect(body.comment).toHaveProperty("created_at", expect.any(String));
+                expect(body.comment.comment_id).toBe(19)
             }
             )
     })
-    it('201 - should add a comment to requested article which also ignores any extra inputted, unnecessary properties', () => {
+    it('201 - POST should add a comment to requested article which also ignores any extra inputted, unnecessary properties', () => {
         const inputComment = {
             body: "Hey geezer",
             username: "rogersop",
@@ -195,16 +196,16 @@ describe('POST /api/articles/:article_id/comments', () => {
             .send(inputComment)
             .expect(201)
             .then(({ body }) => {
-                expect(body.objectComment.body).toBe("Hey geezer");
-                expect(body.objectComment.votes).toBe(0);
-                expect(body.objectComment.author).toBe("rogersop");
-                expect(body.objectComment.article_id).toBe(7);
-                expect(body.objectComment).toHaveProperty("created_at", expect.any(String));
-                expect(body.objectComment.comment_id).toBe(19)
+                expect(body.comment.body).toBe("Hey geezer");
+                expect(body.comment.votes).toBe(0);
+                expect(body.comment.author).toBe("rogersop");
+                expect(body.comment.article_id).toBe(7);
+                expect(body.comment).toHaveProperty("created_at", expect.any(String));
+                expect(body.comment.comment_id).toBe(19)
             }
             )
     })
-    it('404 - Post request for an article that doesnt exist', () => {
+    it('404 - POST request for an article that doesnt exist', () => {
         const inputComment = {
             body: "Hey geezer",
             username: "rogersop",
@@ -217,7 +218,7 @@ describe('POST /api/articles/:article_id/comments', () => {
                 expect(body.msg).toBe('No article found for article 100000')
             })
     })
-    it('404 - Post request for an article for a username that doesnt exist', () => {
+    it('404 - POST request for an article for a username that doesnt exist', () => {
         const inputComment = {
             body: "Hey geezer",
             username: "tom",
@@ -230,7 +231,7 @@ describe('POST /api/articles/:article_id/comments', () => {
                 expect(body.msg).toBe('Username not found')
             })
     })
-    it('400 - GET invalid format for get request', () => {
+    it('400 - POST invalid format for get request', () => {
         const inputComment = {
             body: "Hey geezer",
             username: "rogersop",
@@ -244,7 +245,7 @@ describe('POST /api/articles/:article_id/comments', () => {
                 expect(body.msg).toBe('Wrong data type, please use number')
             })
     })
-    it('400 - GET missing required fields of username or body', () => {
+    it('400 - POST missing required fields of username or body', () => {
         const inputComment = {
             username: "rogersop",
         }

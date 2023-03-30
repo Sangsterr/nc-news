@@ -11,7 +11,6 @@ exports.fetchSpecificArticle = (id) => {
                 msg: `No article found for article ${id}`
             })
         }
-
         return result.rows;
     })
 }
@@ -51,6 +50,7 @@ exports.addArticleComment = (comment, articleNumber) => {
     VALUES ($1, $2, $3)
     RETURNING *;
     `, values).then((result) => {
+
         return result.rows[0]
     })
 }
