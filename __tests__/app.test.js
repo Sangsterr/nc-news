@@ -382,3 +382,113 @@ describe('GET - /api/users', () => {
             })
     });
 });
+
+describe('GET - /api/articles queries', () => {
+    it('200 - Returns all articles by mitch, sorted by article_id in ascending order', () => {
+        return request(app)
+            .get('/api/articles?topic=mitch&sort_by=article_id&order=ASC')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toHaveLength(11)
+                expect(body.articles).toBeSortedBy('article_id', {
+                    descending: false,
+                });
+                body.articles.forEach((article) => {
+                    expect(article.topic).toBe('mitch')
+                    expect(article).toHaveProperty("title", expect.any(String));
+                    expect(article).toHaveProperty("topic", expect.any(String));
+                    expect(article).toHaveProperty("author", expect.any(String));
+                    expect(article).toHaveProperty("body", expect.any(String));
+                    expect(article).toHaveProperty("created_at", expect.any(String));
+                    expect(article).toHaveProperty("votes", expect.any(Number));
+                    expect(article).toHaveProperty("article_img_url", expect.any(String));
+                    expect(article).toHaveProperty("comment_count", expect.any(Number))
+                })
+            })
+    })
+    it('200 - Returns all articles by mitch, sorted by article_id and defaults to descending order', () => {
+        return request(app)
+            .get('/api/articles?topic=mitch&sort_by=article_id')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toHaveLength(11)
+                expect(body.articles).toBeSortedBy('article_id', {
+                    descending: true,
+                });
+                body.articles.forEach((article) => {
+                    expect(article.topic).toBe('mitch')
+                    expect(article).toHaveProperty("title", expect.any(String));
+                    expect(article).toHaveProperty("topic", expect.any(String));
+                    expect(article).toHaveProperty("author", expect.any(String));
+                    expect(article).toHaveProperty("body", expect.any(String));
+                    expect(article).toHaveProperty("created_at", expect.any(String));
+                    expect(article).toHaveProperty("votes", expect.any(Number));
+                    expect(article).toHaveProperty("article_img_url", expect.any(String));
+                    expect(article).toHaveProperty("comment_count", expect.any(Number))
+                })
+            })
+    })
+    it('200 - Returns all articles by mitch defaults sorted_by to created_at and the order to descending order', () => {
+        return request(app)
+            .get('/api/articles?topic=mitch')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toHaveLength(11)
+                expect(body.articles).toBeSortedBy('created_at', {
+                    descending: true,
+                });
+                body.articles.forEach((article) => {
+                    expect(article.topic).toBe('mitch')
+                    expect(article).toHaveProperty("title", expect.any(String));
+                    expect(article).toHaveProperty("topic", expect.any(String));
+                    expect(article).toHaveProperty("author", expect.any(String));
+                    expect(article).toHaveProperty("body", expect.any(String));
+                    expect(article).toHaveProperty("created_at", expect.any(String));
+                    expect(article).toHaveProperty("votes", expect.any(Number));
+                    expect(article).toHaveProperty("article_img_url", expect.any(String));
+                    expect(article).toHaveProperty("comment_count", expect.any(Number))
+                })
+            })
+    })
+    it('should check to make sure when passed no queries that the defaults are still all articles, sorted by created_at & the order is descending', () => {
+        return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toHaveLength(12)
+                expect(body.articles).toBeSortedBy('created_at', {
+                    descending: true,
+                });
+            }
+            )
+    })
+    it('should check to make sure when passed no queries that the defaults are still all articles, sorted by created_at & the order is descending', () => {
+        return request(app)
+            .get('/api/articles?topic=mitch&sort_by=test')
+            .expect(400)
+            .then(({ body }) => {
+
+                expect(body.msg).toBe("Invalid sort query")
+            }
+            )
+    })
+    it('should check to make sure when passed no queries that the defaults are still all articles, sorted by created_at & the order is descending', () => {
+        return request(app)
+            .get('/api/articles?topic=mitch&order=ascending')
+            .expect(400)
+            .then(({ body }) => {
+
+                expect(body.msg).toBe("Invalid order query")
+            }
+            )
+    })
+    it('should check to make sure when passed no queries that the defaults are still all articles, sorted by created_at & the order is descending', () => {
+        return request(app)
+            .get('/api/articles?topic=yo')
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("This article does not exist")
+            }
+            )
+    })
+});
