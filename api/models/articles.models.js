@@ -29,6 +29,19 @@ exports.fetchArticles = () => {
         .then((res) => { return res.rows });
 }
 
+exports.fetchComments = (commentId) => {
+    return db.query(`
+    SELECT * FROM comments WHERE comment_id = $1;`, [commentId]).then((result) => {
+        if (!result.rows.length) {
+            return Promise.reject({
+                status: 400,
+                msg: `This comment does not exist`
+            })
+        }
+        return result.rows
+    })
+}
+
 exports.fetchArticleComments = (article_id) => {
 
     const articleeId = article_id
@@ -37,8 +50,8 @@ exports.fetchArticleComments = (article_id) => {
             `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`,
             [articleeId]
         )
-        .then((data) => {
-            return data.rows;
+        .then((result) => {
+            return result.rows;
         });
 };
 
@@ -65,5 +78,12 @@ SET votes = $2
 WHERE article_id = $1
 RETURNING *;`, information).then((result) => {
         return result.rows[0]
+    })
+}
+
+exports.removeArticle = (commentId) => {
+    return db.query(`
+    DELETE FROM comments WHERE comment_id = $1;`, [commentId]).then((result) => {
+        return result.rows
     })
 }
