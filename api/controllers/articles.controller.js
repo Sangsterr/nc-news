@@ -5,7 +5,7 @@ const { checkTopics } = require('../models/topics.models')
 exports.getSpecificArticle = (req, res, next) => {
     const id = req.params.article_id;
     fetchSpecificArticle(id).then((result) => {
-        res.status(200).send(result);
+        res.status(200).send({ msg: result });
     })
         .catch((err) => {
             next(err)

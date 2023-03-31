@@ -1,57 +1,57 @@
-# Northcoders News API
+Welcome to my news API!
 
-## Background
+This API is a news website, containing plenty of topics and articles to comment, delete and vote on! 
 
-We will be building an API for the purpose of accessing application data programmatically. The intention here is to mimic the building of a real world backend service (such as reddit) which should provide this information to the front end architecture.
+Here is a link to the hosted version: https://james-news.onrender.com/api/articles
 
-Your database will be PSQL, and you will interact with it using [node-postgres](https://node-postgres.com/).
+Minimum versions
+node.js:  v19.5.0
+Postgres: ^8.10.0
 
-## Kanban
+To clone this repository, make sure to fork a copy of the following URL:
 
-### Link to your Trello Board here: https://trello.com/b/7yiHe1nI
+https://github.com/Sangsterr/nc-news
 
-To keep track of the tasks involved in this project we're going to use a kanban board. Ensure that you work on one _ticket_ at time. You can click on the ticket to find out more information about what is required for the feature. A ticket is not considered complete unless both the happy path and errors response are handled. You can make use of the checklist on each ticket to keep track of the errors you want to handle. You can also make use of [error-handling.md](error-handling.md) to consider the error codes we may wish to respond with.
 
-**Please ensure you work through the tickets in numerical order.**
+To install dependencies, you will need the following:
 
-## Git Branching and Pull Requests
+Husky: npm i -D husky,
+Jest: npm i -D jest,
+Jest Sorted: npm i -D jest-sorted
+Postgres: npm i -D pg
+Supertest: npm i -D supertest
 
-You will be working on each ticket on a new **branch**.
 
-To create and switch to a new git branch use the command:
+This api has several different requests you can use, they are as follows:
 
-```
-git checkout -b <new branch name>
-```
+get - /api/topics
 
-This will create a branch and move over to that branch. (Omit the `-b` flag if you wish to switch to an already existing branch).
+    - This provides the client with an array of topics which all have two values, slug (the topic type) & description (explanation of the topic)
 
-We recommend that you name the branch after the number assigned to each ticket via the header. eg. `ncnews-1`
+get - /api/articles
 
-When pushing the branch to git hub ensure that you make reference to the branch you are pushing to on the remote.
+    -   This provides the client with an array of articles, which all have 9 values, article_id (the id of the article), title (the title of the article), author (the author of the article), body (the context of the article), created_at (the timestamp of the article), votes (how many votes the article has), article_img_url (the image linked to the article), comment_count (how many comments the article has)
 
-```
-git push origin <branch name>
-```
+get - /api/articles/:article_id
 
-From github you can make a pull request and share the link and ticket number via a pull request specific nchelp using the command `nchelp pr`. A tutor will swing by to review your code. Ensure that you keep your trello up to date whilst you await the PR approval. Regular `nchelp` will be available for when you need support.
+    - This provides the client with a specific article, the same information provided for one article as mentioned in the last get request, if provided a wrong id, you will receive a correct error code
 
-Once a pull request been accepted be sure to switch back to the main branch and pull down the updated changes.
+get - /api/articles/:article_id/comments
 
-```
-git checkout main
+    - This provides the client with the comments of a specific article, which contain a body, the votes, the author, the article id and when it was created, if provided a wrong id, you will receive a correct error code
 
-git pull origin main
-```
+get - /api/users
 
-You can tidy up your local branches once they have been pull into main by deleting them:
+    - This provides the client with an array of objects of the users of the database, each contains a username, a name and their avatar url
 
-```
-git branch -D <local branch>
-```
+post - /api/articles/:article_id/comments
 
-## Husky
+    - This allows the client to add a comment to the selected article, it should consist of an object with two properties inside an object, a username with a valid string, and a body, also with a valid string, if provided a wrong id, you will receive a correct error code
 
-To ensure we are not commiting broken code this project makes use of git hooks. Git hooks are scripts triggered during certain events in the git lifecycle. Husky is a popular package which allows us to set up and maintain these scripts. This project makes use a _pre-commit hook_. When we attempt to commit our work, the script defined in the `pre-commit` file will run. If any of our tests fail than the commit will be aborted.
+patch - /api/articles/:article_id
 
-The [Husky documentation](https://typicode.github.io/husky/#/) explains how to configure Husky for your own project as well as creating your own custom hooks.\_
+    - This allows the client to vote on a specific article, this would be in the form of an object with a property of inc_votes and an amount they would like to vote by, this can be a positive or negative number & will return with the updated article, if provided a wrong id, you will receive a correct error code
+
+delete - /api/comments/:comment_id'
+
+    - This allows the client to delete a comment, depending on which comment they have selected, this returns a status of 204 and no content, if provided a wrong id, you will receive a correct error code

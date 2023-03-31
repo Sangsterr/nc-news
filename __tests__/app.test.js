@@ -34,9 +34,7 @@ describe('GET: /api/articles/:article_id', () => {
             .get("/api/articles/1")
             .expect(200)
             .then(({ body }) => {
-
-                expect(body[0]).toEqual({
-
+                expect(body.msg[0]).toEqual({
                     article_id: 1,
                     title: 'Living in the shadow of a great man',
                     topic: 'mitch',
@@ -176,7 +174,6 @@ describe('POST /api/articles/:article_id/comments', () => {
             .send(inputComment)
             .expect(201)
             .then(({ body }) => {
-
                 expect(body.comment.body).toBe("Hey geezer");
                 expect(body.comment.votes).toBe(0);
                 expect(body.comment.author).toBe("rogersop");
@@ -390,6 +387,7 @@ describe('GET - /api/articles queries', () => {
             .get('/api/articles?topic=mitch&sort_by=article_id&order=ASC')
             .expect(200)
             .then(({ body }) => {
+
                 expect(body.articles).toHaveLength(11)
                 expect(body.articles).toBeSortedBy('article_id', {
                     descending: false,
