@@ -1,4 +1,4 @@
-const { fetchArticles, fetchSpecificArticle, fetchArticleComments, addArticleComment, articlePatcher, fetchComments, removeArticle } = require('../models/articles.models')
+const { fetchArticles, fetchSpecificArticle, fetchArticleComments, addArticleComment, articlePatcher, fetchComments, removeComment } = require('../models/articles.models')
 const { checkUsername } = require('../models/users.models')
 
 exports.getSpecificArticle = (req, res, next) => {
@@ -70,13 +70,14 @@ exports.patchArticle = (req, res, next) => {
         })
 }
 
-exports.deleteArticle = (req, res, next) => {
+exports.deleteComment = (req, res, next) => {
     const commentId = req.params.comment_id;
-    fetchComments(commentId).then((result) => {
-        return removeArticle(result[0].comment_id)
-    }).then((result) => {
-        res.sendStatus(204)
-    })
+
+    return removeComment(commentId)
+
+        .then(() => {
+            res.sendStatus(204)
+        })
         .catch((err) => {
             next(err)
         })
