@@ -74,7 +74,6 @@ exports.deleteComment = (req, res, next) => {
     const commentId = req.params.comment_id;
 
     return removeComment(commentId)
-
         .then(() => {
             res.sendStatus(204)
         })
