@@ -1,5 +1,6 @@
 const { fetchArticles, fetchSpecificArticle, fetchArticleComments, addArticleComment, articlePatcher, fetchComments, removeComment } = require('../models/articles.models')
 const { checkUsername } = require('../models/users.models')
+const { checkTopics } = require('../models/topics.models')
 
 exports.getSpecificArticle = (req, res, next) => {
     const id = req.params.article_id;
@@ -12,10 +13,25 @@ exports.getSpecificArticle = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    fetchArticles().then((result) => {
+    const { sort_by, order, topic } = req.query;
 
-        res.status(200).send({ articles: result });
-    })
+    if (!topic) {
+        fetchArticles(sort_by, order).then((result) => {
+            res.status(200).send({ articles: result });
+        }).catch((err) => {
+            next(err)
+        })
+    }
+    else {
+        checkTopics(topic).then((result) => {
+            if (result) return fetchArticles(sort_by, order, topic)
+            else Promise.reject({ status: 404, msg: "This topic does not exist" })
+        }).then((result) => {
+            res.status(200).send({ articles: result });
+        }).catch((err) => {
+            next(err)
+        })
+    }
 }
 
 exports.getArticleComments = (req, res, next) => {
