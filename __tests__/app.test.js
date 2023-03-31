@@ -341,3 +341,27 @@ describe('PATCH - /api/articles/:article_id', () => {
             })
     })
 })
+
+describe('DELETE - /api/comments/:comment_id', () => {
+    it('204 - Receive status code 204 and an empty body', () => {
+        return request(app)
+            .delete("/api/comments/10")
+            .expect(204)
+    });
+    it('400 - Returns error when trying delete a comment that doesnt exist', () => {
+        return request(app)
+            .delete("/api/comments/500000")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("This comment does not exist")
+            })
+    })
+    it('400 - Returns error when trying delete a comment that doesnt exist', () => {
+        return request(app)
+            .delete("/api/comments/NotANumber")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Wrong data type, please use number")
+            })
+    })
+});
