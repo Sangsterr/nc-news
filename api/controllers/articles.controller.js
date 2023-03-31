@@ -75,7 +75,7 @@ exports.deleteArticle = (req, res, next) => {
     fetchComments(commentId).then((result) => {
         return removeArticle(result[0].comment_id)
     }).then((result) => {
-        res.status(204).send()
+        res.sendStatus(204)
     })
         .catch((err) => {
             next(err)

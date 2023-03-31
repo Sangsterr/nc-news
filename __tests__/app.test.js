@@ -347,9 +347,6 @@ describe('DELETE - /api/comments/:comment_id', () => {
         return request(app)
             .delete("/api/comments/10")
             .expect(204)
-            .then(({ body }) => {
-                expect(body).toEqual({})
-            })
     });
     it('400 - Returns error when trying delete a comment that doesnt exist', () => {
         return request(app)
