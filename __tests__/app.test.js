@@ -365,3 +365,21 @@ describe('DELETE - /api/comments/:comment_id', () => {
             })
     })
 });
+
+describe('GET - /api/users', () => {
+
+    it('200 - Return the information for the requested user', () => {
+        return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then(({ body }) => {
+                console.log(body);
+                expect(body.users).toHaveLength(4)
+                body.users.forEach((user) => {
+                    expect(user).toHaveProperty("username", expect.any(String));
+                    expect(user).toHaveProperty("name", expect.any(String));
+                    expect(user).toHaveProperty("avatar_url", expect.any(String));
+                })
+            })
+    });
+});
