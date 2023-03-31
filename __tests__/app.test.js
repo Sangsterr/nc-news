@@ -411,6 +411,7 @@ describe('GET - /api/articles queries', () => {
             .get('/api/articles?topic=mitch&sort_by=article_id')
             .expect(200)
             .then(({ body }) => {
+
                 expect(body.articles).toHaveLength(11)
                 expect(body.articles).toBeSortedBy('article_id', {
                     descending: true,
@@ -450,19 +451,23 @@ describe('GET - /api/articles queries', () => {
                 })
             })
     })
-    it('should check to make sure when passed no queries that the defaults are still all articles, sorted by created_at & the order is descending', () => {
+    it('200 - Topic exists but has no articles', () => {
         return request(app)
-            .get('/api/articles')
+            .get('/api/articles?topic=paper')
             .expect(200)
             .then(({ body }) => {
-                expect(body.articles).toHaveLength(12)
-                expect(body.articles).toBeSortedBy('created_at', {
-                    descending: true,
-                });
-            }
-            )
-    })
-    it('should check to make sure when passed no queries that the defaults are still all articles, sorted by created_at & the order is descending', () => {
+                expect(body.articles).toBe('No articles for requested topic')
+            })
+    });
+    it('404 - Topic doesnt exist', () => {
+        return request(app)
+            .get('/api/articles?topic=paperr')
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe('No such topic exists')
+            })
+    });
+    it('400 - returns invalid sort query when given invalid sort query', () => {
         return request(app)
             .get('/api/articles?topic=mitch&sort_by=test')
             .expect(400)
@@ -472,7 +477,7 @@ describe('GET - /api/articles queries', () => {
             }
             )
     })
-    it('should check to make sure when passed no queries that the defaults are still all articles, sorted by created_at & the order is descending', () => {
+    it('should return invalid order query when passed an invalid order query', () => {
         return request(app)
             .get('/api/articles?topic=mitch&order=ascending')
             .expect(400)
@@ -482,12 +487,12 @@ describe('GET - /api/articles queries', () => {
             }
             )
     })
-    it('should check to make sure when passed no queries that the defaults are still all articles, sorted by created_at & the order is descending', () => {
+    it('should return no such topic exists when passed a topic that doesnt exist', () => {
         return request(app)
             .get('/api/articles?topic=yo')
-            .expect(400)
+            .expect(404)
             .then(({ body }) => {
-                expect(body.msg).toBe("This article does not exist")
+                expect(body.msg).toBe("No such topic exists")
             }
             )
     })

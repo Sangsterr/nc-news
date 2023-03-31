@@ -16,6 +16,7 @@ exports.fetchSpecificArticle = (id) => {
 }
 
 exports.fetchArticles = (sortBy, order, topic) => {
+
     if (
         sortBy &&
         sortBy !== "article_id" &&
@@ -37,7 +38,6 @@ exports.fetchArticles = (sortBy, order, topic) => {
         return Promise.reject({ status: 400, msg: "Invalid order query" });
     }
 
-
     let fetchArticlesQueryString =
         `SELECT articles.*, CAST(COALESCE(COUNT(comments.article_id), 0) AS INT) AS 
     comment_count FROM
@@ -50,26 +50,22 @@ exports.fetchArticles = (sortBy, order, topic) => {
 
     fetchArticlesQueryString += ` GROUP BY articles.article_id`;
 
+
+
     if (sortBy && !order) {
         fetchArticlesQueryString += ` ORDER BY ${sortBy} DESC;`;
     } else if (sortBy && order === "ASC") {
-        fetchArticlesQueryString += ` ORDER BY ${sortBy} ${order};`
+        fetchArticlesQueryString += ` ORDER BY ${sortBy} ${order};`;
     } else if (!sortBy && order === "ASC") {
-        fetchArticlesQueryString += ` ORDER BY created_at ${order};`
+        fetchArticlesQueryString += ` ORDER BY created_at ${order};`;
     } else {
         fetchArticlesQueryString += ` ORDER BY created_at DESC;`;
     }
-
     return db
         .query(fetchArticlesQueryString
         )
         .then((result) => {
-            if (result.rowCount === 0) {
-                return Promise.reject({
-                    status: 400,
-                    msg: `This article does not exist`
-                })
-            }
+            if (result.rows.length === 0) return "No articles for requested topic"
             return result.rows
         });
 }
