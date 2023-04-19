@@ -20,7 +20,7 @@ exports.fetchSpecificArticle = (id) => {
     })
 }
 
-exports.fetchArticles = (sortBy, order, topic) => {
+exports.fetchArticles = (sortBy = "created_at", order = "desc", topic) => {
 
     if (
         sortBy &&
@@ -30,7 +30,8 @@ exports.fetchArticles = (sortBy, order, topic) => {
         sortBy !== "author" &&
         sortBy !== "body" &&
         sortBy !== "created_at" &&
-        sortBy !== "votes"
+        sortBy !== "votes" &&
+        sortBy !== "comment_count"
     ) {
         return Promise.reject({ status: 400, msg: "Invalid sort query" });
     }
@@ -57,15 +58,8 @@ exports.fetchArticles = (sortBy, order, topic) => {
 
 
 
-    if (sortBy && !order) {
-        fetchArticlesQueryString += ` ORDER BY ${sortBy} DESC;`;
-    } else if (sortBy && order === "ASC") {
-        fetchArticlesQueryString += ` ORDER BY ${sortBy} ${order};`;
-    } else if (!sortBy && order === "ASC") {
-        fetchArticlesQueryString += ` ORDER BY created_at ${order};`;
-    } else {
-        fetchArticlesQueryString += ` ORDER BY created_at DESC;`;
-    }
+    fetchArticlesQueryString += ` ORDER BY ${sortBy} ${order};`;
+
     return db
         .query(fetchArticlesQueryString
         )
