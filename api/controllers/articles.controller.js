@@ -14,7 +14,6 @@ exports.getSpecificArticle = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
     const { sort_by, order, topic } = req.query;
-    console.log(sort_by, order, topic);
 
     if (!topic) {
         fetchArticles(sort_by, order).then((result) => {
