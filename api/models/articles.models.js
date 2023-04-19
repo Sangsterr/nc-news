@@ -30,8 +30,7 @@ exports.fetchArticles = (sortBy = "created_at", order = "desc", topic) => {
         sortBy !== "author" &&
         sortBy !== "body" &&
         sortBy !== "created_at" &&
-        sortBy !== "votes" &&
-        sortBy !== "comment_count"
+        sortBy !== "votes"
     ) {
         return Promise.reject({ status: 400, msg: "Invalid sort query" });
     }
